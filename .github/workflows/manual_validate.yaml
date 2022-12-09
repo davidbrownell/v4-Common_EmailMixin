@@ -1,0 +1,27 @@
+# ----------------------------------------------------------------------
+# |
+# |  manual_validate.yaml
+# |
+# |  David Brownell <db@DavidBrownell.com>
+# |      2022-12-09 15:02:53
+# |
+# ----------------------------------------------------------------------
+# |
+# |  Copyright David Brownell 2022
+# |  Distributed under the Boost Software License, Version 1.0. See
+# |  accompanying file LICENSE_1_0.txt or copy at
+# |  http://www.boost.org/LICENSE_1_0.txt.
+# |
+# ----------------------------------------------------------------------
+name: "Validate"
+run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }}
+
+on:
+  workflow_dispatch:
+
+jobs:
+  _cef3d0a1-3ff5-4f2d-a879-85a767bcea8b:
+    name: "Validate"
+    uses: davidbrownell/v4-Common_EmailMixin/.github/workflows/validate.yaml@CI-latest
+    with:
+      repo_branch:                          ${{ github.ref_name }}

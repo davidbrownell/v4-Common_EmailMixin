@@ -1,0 +1,28 @@
+# ----------------------------------------------------------------------
+# |
+# |  event_periodic.yaml
+# |
+# |  David Brownell <db@DavidBrownell.com>
+# |      2022-12-09 15:02:36
+# |
+# ----------------------------------------------------------------------
+# |
+# |  Copyright David Brownell 2022
+# |  Distributed under the Boost Software License, Version 1.0. See
+# |  accompanying file LICENSE_1_0.txt or copy at
+# |  http://www.boost.org/LICENSE_1_0.txt.
+# |
+# ----------------------------------------------------------------------
+name: "on periodic"
+run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }}
+
+on:
+  schedule:
+    - cron: '0 9 * * *' # Once a day at 9am UTC
+
+jobs:
+  _0ac3c6fe-1313-46d7-8c20-4b241d6cfa4d:
+    name: "Validate"
+    uses: davidbrownell/v4-Common_EmailMixin/.github/workflows/validate.yaml@CI-latest
+    with:
+      repo_branch:                          ${{ github.ref_name }}
