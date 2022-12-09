@@ -1,0 +1,38 @@
+# ----------------------------------------------------------------------
+# |
+# |  event_on_push.yaml
+# |
+# |  David Brownell <db@DavidBrownell.com>
+# |      2022-12-09 15:02:26
+# |
+# ----------------------------------------------------------------------
+# |
+# |  Copyright David Brownell 2022
+# |  Distributed under the Boost Software License, Version 1.0. See
+# |  accompanying file LICENSE_1_0.txt or copy at
+# |  http://www.boost.org/LICENSE_1_0.txt.
+# |
+# ----------------------------------------------------------------------
+name: "on push"
+run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }}
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency: "on_push-${{ github.ref_name }}"
+
+jobs:
+  _54f6f443-3ac3-43e2-ae1f-407d76c7a46e:
+    name: "Validate"
+    uses: davidbrownell/v4-Common_EmailMixin/.github/workflows/validate_with_dependencies.yaml@CI-latest
+    with:
+      repo_branch:                          ${{ github.ref_name }}
+
+  _4597cf94-2290-4175-91f0-0ce2f7402a97:
+    name: "Promote"
+    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_promote.yaml@CI-v1
+
+    needs:
+      - _54f6f443-3ac3-43e2-ae1f-407d76c7a46e

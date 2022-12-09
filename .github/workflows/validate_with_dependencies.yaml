@@ -1,0 +1,29 @@
+# ----------------------------------------------------------------------
+# |
+# |  validate_with_dependencies.yaml
+# |
+# |  David Brownell <db@DavidBrownell.com>
+# |      2022-12-09 15:03:06
+# |
+# ----------------------------------------------------------------------
+# |
+# |  Copyright David Brownell 2022
+# |  Distributed under the Boost Software License, Version 1.0. See
+# |  accompanying file LICENSE_1_0.txt or copy at
+# |  http://www.boost.org/LICENSE_1_0.txt.
+# |
+# ----------------------------------------------------------------------
+name: "[callable] Validates Common_EmailMixin (and its dependencies)"
+
+on:
+  workflow_call:
+    inputs:
+      repo_branch:                          {type: string, required: true}
+
+jobs:
+  _b0db845f-1ee4-459d-9390-a47e78d89925:
+    name: "Common_EmailMixin"
+    uses: davidbrownell/v4-Common_EmailMixin/.github/workflows/validate.yaml@CI-latest
+    with:
+      repo_branch: ${{ inputs.repo_branch }}
+      bootstrap_branch_overrides: "Common_EmailMixin:${{ inputs.repo_branch }}"
