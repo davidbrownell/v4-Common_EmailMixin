@@ -27,3 +27,6 @@ coverage.xml
 test_localsystem.txt
 
 # ----------------------------------------------------------------------
+.pylintrc
+
+Libraries/Python/Common_EmailMixin/src/Common_EmailMixin.egg-info/**

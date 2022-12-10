@@ -15,8 +15,9 @@
 # ----------------------------------------------------------------------
 # pylint: disable=missing-module-docstring
 
-import uuid                                             # pylint: disable=unused-import
+import os
 
+from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 from semantic_version import Version as SemVer          # pylint: disable=unused-import
@@ -24,6 +25,7 @@ from semantic_version import Version as SemVer          # pylint: disable=unused
 from Common_Foundation.Shell.All import CurrentShell                        # type: ignore  # pylint: disable=import-error,unused-import
 from Common_Foundation.Shell import Commands                                # type: ignore  # pylint: disable=import-error,unused-import
 from Common_Foundation.Streams.DoneManager import DoneManager               # type: ignore  # pylint: disable=import-error,unused-import
+from Common_Foundation import Types                                         # type: ignore  # pylint: disable=import-error,unused-import
 
 from RepositoryBootstrap import Configuration                               # type: ignore  # pylint: disable=import-error,unused-import
 from RepositoryBootstrap import Constants                                   # type: ignore  # pylint: disable=import-error,unused-import
@@ -66,4 +68,22 @@ def GetCustomActions(
 ) -> List[Commands.Command]:
     """Return custom actions invoked as part of the setup process for this repository"""
 
-    return []
+    commands: List[Commands.Command] = []
+
+    root_dir = Path(__file__).parent
+    assert root_dir.is_dir(), root_dir
+
+    # Create a link to the foundation's .pylintrc file
+    foundation_root_file = Path(Types.EnsureValid(os.getenv(Constants.DE_FOUNDATION_ROOT_NAME))) / ".pylintrc"
+    assert foundation_root_file.is_file(), foundation_root_file
+
+    commands.append(
+        Commands.SymbolicLink(
+            root_dir / foundation_root_file.name,
+            foundation_root_file,
+            remove_existing=True,
+            relative_path=True,
+        ),
+    )
+
+    return commands
