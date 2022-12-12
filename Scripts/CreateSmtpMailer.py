@@ -13,7 +13,7 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-"""Creates, Lists, and Verifies SmtpMailer profiles"""
+"""Creates, Lists, and Verifies SmtpMailer profiles."""
 
 import datetime
 import getpass
