@@ -156,12 +156,13 @@ def Verify(
         ):
             mailer = SmtpMailer.Load(profile_name)
 
-        mailer.SendMessage(
-            recipients,
-            "SmtpMailer Verification ({})".format(datetime.datetime.now()),
-            "This is a test message to ensure that the profile '{}' is working as expected.\n".format(profile_name),
-            attachments,
-        )
+        with dm.Nested("Sending message..."):
+            mailer.SendMessage(
+                recipients,
+                "SmtpMailer Verification ({})".format(datetime.datetime.now()),
+                "This is a test message to ensure that the profile '{}' is working as expected.\n".format(profile_name),
+                attachments,
+            )
 
 
 # ----------------------------------------------------------------------
