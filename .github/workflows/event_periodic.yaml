@@ -31,7 +31,7 @@ jobs:
     name: "Validate with Dependencies (${{ github.ref_name }})"
     uses: davidbrownell/v4-Common_EmailMixin/.github/workflows/validate_with_dependencies.yaml@CI-latest
     with:
-      repo-branch: ${{ github.ref_name }}
+      repo_branch: ${{ github.ref_name }}
 
     needs:
       - _0ac3c6fe-1313-46d7-8c20-4b241d6cfa4d
