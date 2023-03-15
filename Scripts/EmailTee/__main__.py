@@ -68,7 +68,7 @@ app                                         = typer.Typer(
     no_args_is_help=True,
 )
 def EntryPoint(
-    command_line: str=typer.Argument(..., help="Command line to invoke; all output will be included in the email message."),
+    command_line: str=typer.Argument(..., help="Command line to invoke; all output will be included in the email message. If the argument begins with '@', the rest of the command line will be interpreted as a filename and the command line will be read from that file."),
     smtp_profile_name: str=typer.Argument(..., help="SMTP profile name; use 'CreateSmtpMailer{}' to list existing profiles or create a new profile.".format(CurrentShell.script_extensions[0])),
     email_recipients: list[str]=typer.Argument(..., help="Recipient(s) for the email message."),
     email_subject: str=typer.Argument(..., help="Subject of the email message; '{now}' can be used in the string as a template placeholder for the current time."),
@@ -82,6 +82,22 @@ def EntryPoint(
     ) as dm:
         if command_line_desc is None:
             command_line_desc = command_line
+
+        if command_line.startswith("@"):
+            command_filename = Path(command_line[1:])
+
+            if not command_filename.is_file():
+                dm.WriteError(
+                    "'{}' is not a valid file name for the command line argument '{}'.".format(
+                        command_filename,
+                        command_line,
+                    ),
+                )
+
+                return
+
+            with command_filename.open("r") as f:
+                command_line = f.read().strip()
 
         try:
             smtp_mailer = SmtpMailer.Load(smtp_profile_name)
