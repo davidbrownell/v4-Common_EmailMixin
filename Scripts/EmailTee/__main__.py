@@ -72,7 +72,6 @@ def EntryPoint(
     smtp_profile_name: str=typer.Argument(..., help="SMTP profile name; use 'CreateSmtpMailer{}' to list existing profiles or create a new profile.".format(CurrentShell.script_extensions[0])),
     email_recipients: list[str]=typer.Argument(..., help="Recipient(s) for the email message."),
     email_subject: str=typer.Argument(..., help="Subject of the email message; '{now}' can be used in the string as a template placeholder for the current time."),
-    command_line_desc: Optional[str]=typer.Option(None, "--command-line-desc", help="Description of the command line used within the email message; provide this value if the command line contains passwords or other sensitive information."),
     background_color: str=typer.Option("black", "--background-color", help="Email background color."),
     verbose: bool=typer.Option(False, "--verbose", help="Write verbose information to the terminal."),
     debug: bool=typer.Option(False, "--debug", help="Write debug information to the terminal."),
@@ -80,9 +79,6 @@ def EntryPoint(
     with DoneManager.CreateCommandLine(
         output_flags=DoneManagerFlags.Create(verbose=verbose, debug=debug),
     ) as dm:
-        if command_line_desc is None:
-            command_line_desc = command_line
-
         if command_line.startswith("@"):
             command_filename = Path(command_line[1:])
 
@@ -106,7 +102,7 @@ def EntryPoint(
             return
 
         with dm.Nested(
-            "Running '{}'...".format(command_line_desc),
+            "Running command...",
             suffix="\n",
         ) as running_dm:
             # Create the stream used to capture the message content
