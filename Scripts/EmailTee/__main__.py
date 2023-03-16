@@ -15,6 +15,7 @@
 # ----------------------------------------------------------------------
 """Sends an email message that includes the result on logs of an executed process."""
 
+import os
 import sys
 
 from datetime import datetime
@@ -72,10 +73,15 @@ def EntryPoint(
     smtp_profile_name: str=typer.Argument(..., help="SMTP profile name; use 'CreateSmtpMailer{}' to list existing profiles or create a new profile.".format(CurrentShell.script_extensions[0])),
     email_recipients: list[str]=typer.Argument(..., help="Recipient(s) for the email message."),
     email_subject: str=typer.Argument(..., help="Subject of the email message; '{now}' can be used in the string as a template placeholder for the current time."),
+    force_color: bool=typer.Option(False, "--force-color", help="Forces color ouptut."),
+    output_filename: Optional[Path]=typer.Option(None, "--output-filename", dir_okay=False, resolve_path=True, help="Writes formatted html output to a file; this is useful when --force-color has also been specified as an argument."),
     background_color: str=typer.Option("black", "--background-color", help="Email background color."),
     verbose: bool=typer.Option(False, "--verbose", help="Write verbose information to the terminal."),
     debug: bool=typer.Option(False, "--debug", help="Write debug information to the terminal."),
 ) -> None:
+    if force_color:
+        os.environ["SIMULATE_TERMINAL_CAPABILITIES_SUPPORTS_COLORS"] = "1"
+
     with DoneManager.CreateCommandLine(
         output_flags=DoneManagerFlags.Create(verbose=verbose, debug=debug),
     ) as dm:
@@ -110,7 +116,6 @@ def EntryPoint(
 
             Capabilities.Create(
                 message_sink,
-                #columns=120,
                 is_interactive=False,
                 supports_colors=True,
                 is_headless=True,
@@ -125,32 +130,49 @@ def EntryPoint(
 
             message = message_sink.getvalue()
 
-        # Value to convert spaces into before the text is converted to html.
-        space_placeholder = "__nbsp;__"
+        with dm.Nested(
+            "Processing output...",
+            suffix="\n",
+        ) as processing_dm:
+            title = None
 
-        with dm.Nested("Converting output to HTML..."):
-            message = message.replace(" ", space_placeholder)
+            if output_filename:
+                title = output_filename.stem
 
-            message = Ansi2HTMLConverter(
-                dark_bg=True,
-                inline=True,
-                line_wrap=False,
-            ).convert(message)
+            # Value to convert spaces into before the text is converted to html.
+            space_placeholder = "__nbsp;__"
 
-        for source, dest in [
-            (space_placeholder, "&nbsp;"),
-            # Create a div to set the background color
-            (
-                '<pre class="ansi2html-content">\n',
-                '<pre class="ansi2html-content">\n<div style="background-color: {}">\n'.format(background_color),
-            ),
-            # Undo the div that set the background color
-            (
-                "</pre>\n",
-                "</div>\n</pre>\n",
-            ),
-        ]:
-            message = message.replace(source, dest)
+            with processing_dm.Nested("Converting output to HTML..."):
+                message = message.replace(" ", space_placeholder)
+
+                message = Ansi2HTMLConverter(
+                    dark_bg=True,
+                    inline=True,
+                    line_wrap=False,
+                    title=title or "",
+                ).convert(message)
+
+            for source, dest in [
+                (space_placeholder, "&nbsp;"),
+                # Create a div to set the background color
+                (
+                    '<pre class="ansi2html-content">\n',
+                    '<pre class="ansi2html-content">\n<div style="background-color: {}">\n'.format(background_color),
+                ),
+                # Undo the div that set the background color
+                (
+                    "</pre>\n",
+                    "</div>\n</pre>\n",
+                ),
+            ]:
+                message = message.replace(source, dest)
+
+            if output_filename is not None:
+                with processing_dm.Nested("Writing to '{}'...".format(output_filename)):
+                    output_filename.parent.mkdir(parents=True, exist_ok=True)
+
+                    with output_filename.open("w", encoding="utf-8") as f:
+                        f.write(message)
 
         with dm.Nested("Sending email...") as email_dm:
             try:
