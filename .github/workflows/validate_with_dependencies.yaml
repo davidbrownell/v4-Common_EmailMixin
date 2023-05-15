@@ -23,7 +23,7 @@ on:
 jobs:
   _b0db845f-1ee4-459d-9390-a47e78d89925:
     name: "Common_EmailMixin"
-    uses: davidbrownell/v4-Common_EmailMixin/.github/workflows/validate.yaml@CI-latest
+    uses: davidbrownell/v4-Common_EmailMixin/.github/workflows/validate.yaml@CI-v1
     with:
       repo_branch: ${{ inputs.repo_branch }}
       bootstrap_branch_overrides: "Common_EmailMixin:${{ inputs.repo_branch }}"

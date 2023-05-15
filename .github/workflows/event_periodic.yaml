@@ -23,13 +23,13 @@ on:
 jobs:
   _0ac3c6fe-1313-46d7-8c20-4b241d6cfa4d:
     name: "Validate (${{ github.ref_name }})"
-    uses: davidbrownell/v4-Common_EmailMixin/.github/workflows/validate.yaml@CI-latest
+    uses: davidbrownell/v4-Common_EmailMixin/.github/workflows/validate.yaml@CI-v1
     with:
       repo_branch: ${{ github.ref_name }}
 
   _367a06ba-2a54-4ccc-9e13-9fd9d25e317c:
     name: "Validate with Dependencies (${{ github.ref_name }})"
-    uses: davidbrownell/v4-Common_EmailMixin/.github/workflows/validate_with_dependencies.yaml@CI-latest
+    uses: davidbrownell/v4-Common_EmailMixin/.github/workflows/validate_with_dependencies.yaml@CI-v1
     with:
       repo_branch: ${{ github.ref_name }}
 

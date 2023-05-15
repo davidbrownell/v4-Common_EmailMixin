@@ -24,13 +24,13 @@ on:
 jobs:
   _690be970-0ae4-48c1-a1fa-195c46dffb5b:
     name: "Validate (target: ${{ github.base_ref }})"
-    uses: davidbrownell/v4-Common_EmailMixin/.github/workflows/validate.yaml@CI-latest
+    uses: davidbrownell/v4-Common_EmailMixin/.github/workflows/validate.yaml@CI-v1
     with:
       repo_branch: ${{ github.head_ref }}
 
   _374d6d83-fd19-42db-b896-230475bcc4e5:
     name: "Validate Pull Request (target: ${{ github.base_ref }})"
-    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_validate_pull_request.yaml@CI-latest
+    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_validate_pull_request.yaml@CI-v1
     with:
       job_name_prefix: Common_EmailMixin
       is_mixin_repository: true
